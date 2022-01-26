@@ -23,8 +23,17 @@ tr{
 }
 
 
-.td_background{
+.td_mine{
     background-image: url(../assets/images/2.jpg);
     background-size: cover;
     background-color: red;
+}
+
+.td_regular{
+    background-color: greenyellow;
+}
+
+.td_flag{
+    background-image: url(../assets/images/flag.jpg);
+    background-size: cover;
 }
