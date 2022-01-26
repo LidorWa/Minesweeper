@@ -1,0 +1,30 @@
+body{
+    background-image: url(../assets/images/1.jpg);
+    background-size: cover;
+    text-align: center;
+}
+
+table{
+    border: 2px solid;
+}
+td{
+    background-color: gray;
+    width: 60px;
+
+}
+tr{
+    height: 60px;
+}
+
+.main{
+    display: inline-block;
+    margin: auto;
+    margin-top: 40px;
+}
+
+
+.td_background{
+    background-image: url(../assets/images/2.jpg);
+    background-size: cover;
+    background-color: red;
+}
