@@ -9,17 +9,17 @@ table{
 }
 td{
     background-color: gray;
-    width: 60px;
+    width: 50px;
 
 }
 tr{
-    height: 60px;
+    height: 50px;
 }
 
 .main{
     display: inline-block;
     margin: auto;
-    margin-top: 40px;
+    
 }
 
 
@@ -37,3 +37,34 @@ tr{
     background-image: url(../assets/images/flag.jpg);
     background-size: cover;
 }
+
+.modal{
+    display: inline-block;
+    width: 200px;
+    height: 60px;
+    border: 2px dashed red;
+    color: orange;
+    font-size:medium;
+    background-color: white;
+}
+
+.emoji:hover{
+    cursor: pointer;
+
+}
+
+.difficulty{
+    color: orange;
+    margin: 5px;
+}
+.difficulty button{
+    border-radius: 25%;
+}
+.hard{
+    background-color: tomato;
+}
+
+.hardest{
+    background-color:maroon;
+}
+

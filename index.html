@@ -1,21 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/main.css">
     <title>Mine sweeper game!</title>
 </head>
-<body onload="init()">
-    <div class = "main">
-    <table>
-        <tbody class ="board">
 
-        </tbody>
-    </table>
-</div>
+<body onload="init()">
+    <div class="main">
+        <div class="modal"><span>Mines count: </span><span class="mines-count"></span>
+            <span class="emoji" onclick="restart(this)">(❁´◡`❁)</span>
+            <span>Game time: </span><span class="timer"></span><br>
+            <span>Number of lives left: </span><span class="lives"></span>
+        </div>
+        <table>
+            <tbody class="board">
+
+            </tbody>
+        </table>
+    </div>
+    <div class="difficulty"> change difficulty:<br>
+        <button class="easy" onclick="changeDifficulty(this)">Easy!</button><br>
+        <button class="hard" onclick="changeDifficulty(this)">Hard!</button><br>
+        <button class="hardest" onclick="changeDifficulty(this)">A nightmare in the deep!</button>
+    </div>
     <script src="js/utils.js"></script>
     <script src="js/main.js"></script>
 </body>
-</html>
 
+</html>
