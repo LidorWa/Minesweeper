@@ -41,7 +41,7 @@ tr{
 .modal{
     display: inline-block;
     width: 200px;
-    height: 60px;
+    height: 80px;
     border: 2px dashed red;
     color: orange;
     font-size:medium;
