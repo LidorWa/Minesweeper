@@ -231,6 +231,39 @@ function cellMarked(elCell, cellI, cellJ) {
     gameOver();
 }
 
+function safeClick() {
+    var safeArray = checkCellsForSafeClick();
+    console.log('safeArray', safeArray)
+    var pos = getRandomIntInclusive(0, safeArray.length - 1)
+    console.log('pos', pos)
+
+    var cell = document.getElementById(`${safeArray[pos].i}-${safeArray[pos].j}`);
+    console.log('cell', cell)
+
+    cell.classList.add('safe-click');
+    cell.classList.remove('td_regular');
+
+    cell.innerText = gBoard[safeArray[pos].i][safeArray[pos].j].minesAroundCount;
+    setTimeout(function () {
+        cell.classList.remove('safe-click');
+        cell.innerText = '';
+    }, 1000);
+
+}
+
+function checkCellsForSafeClick() {
+    var array = [];
+    for (var i = 0; i < gBoard.length; i++) {
+        for (var j = 0; j < gBoard[0].length; j++) {
+            if (!gBoard[i][j].isMarked && !gBoard[i][j].isMine && !gBoard[i][j].isShown) {
+                var location = { i: i, j: j };
+                array.push(location);
+            }
+        }
+    }
+    return array;
+}
+
 
 function restart() {
     document.querySelector('.timer').innerText = '';
