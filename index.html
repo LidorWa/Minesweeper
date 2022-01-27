@@ -10,10 +10,11 @@
 
 <body onload="init()">
     <div class="main">
-        <div class="modal"><span>Mines count: </span><span class="mines-count"></span><br>
-            <span class="emoji" onclick="restart(this)">(❁´◡`❁)</span><br>
-            <span>Game time: </span><span class="timer"></span><br>
-            <span>Number of lives left: </span><span class="lives"></span>
+        <div class="modal"><span>Mines: </span><span class="mines-count"></span><br>
+            <span>Flags: </span><span class="flagged"></span><br>
+            <span class="emoji" onclick="restart()">(❁´◡`❁)</span><br>
+            <span>Time: </span><span class="timer"></span>
+            <span>lives left: </span><span class="lives"></span>
         </div>
         <table>
             <tbody class="board">
@@ -24,9 +25,10 @@
     <div class="difficulty"> change difficulty:<br>
         <button class="easy" onclick="changeDifficulty(this)">Easy!</button><br>
         <button class="hard" onclick="changeDifficulty(this)">Hard!</button><br>
-        <button class="hardest" onclick="changeDifficulty(this)">A nightmare in the deep!</button>
+        <button class="hardest" onclick="changeDifficulty(this)">Nightmare in the deep!</button>
     </div>
     <script src="js/utils.js"></script>
+    <script src="js/mines.js"></script>
     <script src="js/main.js"></script>
 </body>
 
