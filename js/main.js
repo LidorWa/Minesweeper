@@ -15,7 +15,7 @@ var gGame = {              // an object indicating the status of the game
     secsPassed: 0         // that key represents the time passed (will start counting on the first cell click)
 };                        // the info will be shown in spans in a modal (or maybe different places)
 var gIsFirstClick = true;
-var mineSound = new Audio('../assets/sounds/mine.mp3');
+var mineSound = new Audio('assets/sounds/mine.mp3');
 var gIntervalId = null;
 var gMinutes = 0;
 var gLives = gLevel.LIVES;
