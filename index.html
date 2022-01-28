@@ -9,8 +9,42 @@
 </head>
 
 <body onload="init()">
+    <div class="game-scores">
+        <table class="scores">
+            <tablebody>
+                <tr>
+                    <th>Level:</th>
+                    <th>Best score:</th>
+                </tr>
+                <tr>
+                    <td>1: (4X4)<br>2 mines<br>1 life</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>2: (8X8)<br>12 mines<br>3 lives</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>3: (12X12)<br>30 mines<br>3 lives</td>
+                    <td></td>
+                </tr>
+            </tablebody>
+        </table>
+    </div>
+    <!-- <div class="header">
+        <h2>Minesweeper Game!</h2>
+        <button class="Change-player" onclick="handleNewPlayer()">Change player</button>
+    </div> -->
+    <div class="bonuses">
+        <button class="safe-btn" onclick="safeClick(this)" title="Clicking this will reveal one none-mine cell for a brief time!">Safe click!</button>
+        <br>
+        <img src="assets/images/lightoff.jpg" onclick="hintClick(this)" class="hint hint1" title="Clicking this and clicking the board will show the cell and its neighbors for a brief time!">
+        <img src="assets/images/lightoff.jpg" onclick="hintClick(this)" class="hint hint2" title="Clicking this and clicking the board will show the cell and its neighbors for a brief time!">
+        <img src="assets/images/lightoff.jpg" onclick="hintClick(this)" class="hint hint3" title="Clicking this and clicking the board will show the cell and its neighbors for a brief time!">
+    </div>
     <div class="main">
-        <div class="modal"><span>Mines: </span><span class="mines-count"></span><span> Cells shown:</span><span class="shown"></span><br>
+        <div class="modal"><span>Mines: </span><span class="mines-count"></span><span> Cells shown: </span><span
+                class="shown"></span><br>
             <span>Flags: </span><span class="flagged"></span><br>
             <span class="emoji" onclick="restart()">(❁´◡`❁)</span><br>
             <span>Time: </span><span class="timer"></span>
@@ -22,16 +56,15 @@
             </tbody>
         </table>
     </div>
-    <div class="difficulty"> change difficulty:<br>
-        <button class="easy" onclick="changeDifficulty(this)">Easy!</button><br>
-        <button class="hard" onclick="changeDifficulty(this)">Hard!</button><br>
+    <div class="difficulty"> change difficulty:
+        <button class="easy" onclick="changeDifficulty(this)">Easy!</button>
+        <button class="hard" onclick="changeDifficulty(this)">Hard!</button>
         <button class="hardest" onclick="changeDifficulty(this)">Nightmare in the deep!</button>
     </div>
-    <div>
-        <button class="safe-btn" onclick="safeClick(this)">Safe click!</button>
-    </div>
+    <script src="js/localstorage.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/mines.js"></script>
+    <script src="js/bonusfeatures.js"></script>
     <script src="js/main.js"></script>
 </body>
 

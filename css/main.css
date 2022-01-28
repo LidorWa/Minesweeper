@@ -3,7 +3,14 @@ body{
     background-size: cover;
     text-align: center;
 }
-
+/* .change-player{
+    display: inline;
+    text-align: right;
+    float: right;
+} */
+.scores{
+    position:absolute;
+}
 table{
     border: 2px solid;
 }
@@ -14,6 +21,9 @@ td{
 }
 tr{
     height: 50px;
+}
+th {
+    background-color: gray;
 }
 
 .main{
@@ -55,7 +65,11 @@ tr{
 
 .difficulty{
     color: orange;
-    margin: 5px;
+    border: 2px solid gray;
+    width: 400px;
+    margin: auto;
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,87,121,1) 35%, rgba(0,212,255,1) 100%);
 }
 .difficulty button{
     border-radius: 25%;
@@ -67,8 +81,30 @@ tr{
 .hardest{
     background-color:maroon;
 }
-
+.bonuses{
+    display: block;
+    position:absolute;
+    margin-left: 530px;;
+    
+}
 .safe-click{
     background-color: pink;
+}
+.tooltiptext-safe {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+  }
+.safe-click:hover + .tooltiptext-safe{
+    visibility: visible;
+}
+.hint:hover .tooltip-hint{
+    visibility: visible;
 }
 

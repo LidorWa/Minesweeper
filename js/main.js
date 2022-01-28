@@ -12,6 +12,9 @@ var gGame = {              // an object indicating the status of the game
     isOn: true,           // that key indicating if the game is on or not (false will prevent the player from making any changes)
     shownCount: 0,        // that key represents the number of cells revealed on the board
     markedCount: 0,       // that key represents the number of flagged cells
+    safeCount: 3,
+    isHintOn: false,
+    hintCount: 3,
     secsPassed: 0         // that key represents the time passed (will start counting on the first cell click)
 };                        // the info will be shown in spans in a modal (or maybe different places)
 var gIsFirstClick = true;
@@ -19,25 +22,43 @@ var mineSound = new Audio('assets/sounds/mine.mp3');
 var gIntervalId = null;
 var gMinutes = 0;
 var gLives = gLevel.LIVES;
+var gTimer;
+
 
 function init() {
+    // handleNewPlayer();
+    resetModelVarsDomForInit();
+    gBoard = buildBoard();
+    renderBoard(gBoard);
+}
+
+function resetModelVarsDomForInit(){
     gGame.isOn = true;
     gGame.shownCount = 0;
     gGame.markedCount = 0;
     gLives = gLevel.LIVES;
     gGame.secsPassed = 0;
+    gGame.safeCount = 3;
+    var elBtn = document.querySelector('.safe-btn');
+    elBtn.disabled = false;
+    elBtn.style.cursor = 'pointer';
     gMinutes = 0;
     var elSpan = document.querySelector('.timer');
     elSpan.innerText = gGame.secsPassed;
     clearInterval(gIntervalId);
+    document.querySelector('.hint1').src = 'assets/images/lightoff.jpg'
+    document.querySelector('.hint2').src = 'assets/images/lightoff.jpg'
+    document.querySelector('.hint3').src = 'assets/images/lightoff.jpg'
+    var elementToChange = document.getElementsByTagName('body')[0];
+    elementToChange.style.cursor = 'default';
     elSpan = document.querySelector('.mines-count');
     elSpan.innerText = gLevel.MINES;
     elSpan = document.querySelector('.lives');
     elSpan.innerText = gLevel.LIVES;
+    elSpan = document.querySelector('.shown');
+    elSpan.innerText = gGame.shownCount;
     elSpan = document.querySelector('.emoji');
     elSpan.innerText = '(❁´◡`❁)';
-    gBoard = buildBoard();
-    renderBoard(gBoard);
 }
 
 
@@ -69,17 +90,21 @@ function renderBoard(board) {
     elBoard.innerHTML = strHTML;
 }
 
-
-
 function cellClicked(ellCell, cellI, cellJ) {
     if (!gGame.isOn || ellCell.classList.contains('td_mine') || ellCell.classList.contains('td_regular')
         || gBoard[cellI][cellJ].isMarked) return;
+    // if (gGame.isHintOn) {
+    //     expandShownForHint(gBoard, cellI,cellJ)
+    //      document.getElementsByTagName("body")[0].style.cursor = 'pointer';
+    // }
 
     gBoard[cellI][cellJ].isShown = true;
     gGame.shownCount++;
-
+    var elSpan = document.querySelector('.shown');
+    elSpan.innerText = gGame.shownCount;
     if (gIsFirstClick) {
         firstClick();
+        gTimer = Date.now();
 
         ellCell.innerText = gBoard[cellI][cellJ].minesAroundCount;
         ellCell.classList.add('td_regular');
@@ -136,6 +161,8 @@ function gameOver() {
     } else if (checkVictory()) {
         msg = 'You have won! The world is safer because of you! Would you like to play again?';
         elSpan.innerText = '༼ つ ◕_◕ ༽つ';
+        gTimer = ((Date.now() - gTimer) / 1000);
+        handleTime(gTimer);
     } else {
         return;
     }
@@ -203,6 +230,8 @@ function expandShown(board, cellI, cellJ) {
                 document.getElementById(`${i}-${j}`).innerText = board[i][j].minesAroundCount;
                 gGame.shownCount++;
                 expandShown(board, i, j);
+                var elSpan = document.querySelector('.shown');
+                elSpan.innerText = gGame.shownCount;
             }
         }
     }
@@ -231,40 +260,6 @@ function cellMarked(elCell, cellI, cellJ) {
     gameOver();
 }
 
-function safeClick() {
-    var safeArray = checkCellsForSafeClick();
-    console.log('safeArray', safeArray)
-    var pos = getRandomIntInclusive(0, safeArray.length - 1)
-    console.log('pos', pos)
-
-    var cell = document.getElementById(`${safeArray[pos].i}-${safeArray[pos].j}`);
-    console.log('cell', cell)
-
-    cell.classList.add('safe-click');
-    cell.classList.remove('td_regular');
-
-    cell.innerText = gBoard[safeArray[pos].i][safeArray[pos].j].minesAroundCount;
-    setTimeout(function () {
-        cell.classList.remove('safe-click');
-        cell.innerText = '';
-    }, 1000);
-
-}
-
-function checkCellsForSafeClick() {
-    var array = [];
-    for (var i = 0; i < gBoard.length; i++) {
-        for (var j = 0; j < gBoard[0].length; j++) {
-            if (!gBoard[i][j].isMarked && !gBoard[i][j].isMine && !gBoard[i][j].isShown) {
-                var location = { i: i, j: j };
-                array.push(location);
-            }
-        }
-    }
-    return array;
-}
-
-
 function restart() {
     document.querySelector('.timer').innerText = '';
     gGame.secsPassed = 0;
@@ -290,5 +285,3 @@ function changeDifficulty(elBtn) {
     init();
 }
 
-
-// TODO: to fix the timer to inlude 0 before the mintues digits

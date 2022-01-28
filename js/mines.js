@@ -1,3 +1,5 @@
+'use strict'
+
 function emptyCellsArray() {
     var array = [];
     for (var i = 0; i < gBoard.length; i++) {
