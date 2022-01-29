@@ -8,7 +8,7 @@
     <title>Mine sweeper game!</title>
 </head>
 
-<body onload="init()">
+<body onload="init()">  <!--onkeyup="handleKey(event)" -->
     <div class="game-scores">
         <table class="scores">
             <tablebody>
@@ -18,29 +18,32 @@
                 </tr>
                 <tr>
                     <td>1: (4X4)<br>2 mines<br>1 life</td>
-                    <td></td>
+                    <td class="score1"></td>
                 </tr>
                 <tr>
                     <td>2: (8X8)<br>12 mines<br>3 lives</td>
-                    <td></td>
+                    <td class="score2"></td>
                 </tr>
                 <tr>
                     <td>3: (12X12)<br>30 mines<br>3 lives</td>
-                    <td></td>
+                    <td class="score3"></td>
                 </tr>
             </tablebody>
         </table>
     </div>
-    <!-- <div class="header">
-        <h2>Minesweeper Game!</h2>
-        <button class="Change-player" onclick="handleNewPlayer()">Change player</button>
-    </div> -->
-    <div class="bonuses">
-        <button class="safe-btn" onclick="safeClick(this)" title="Clicking this will reveal one none-mine cell for a brief time!">Safe click!</button>
+    <div class="bonuses-left">
+        <button class="safe-btn" onclick="safeClick(this)" title="Clicking this will reveal one none-mine cell for a brief time!
+         will not work before first cell click!">Safe click!</button>
+         <!-- <button class="undo" onclick="undoAction()" title="Rewind time!!!">Undo!</button> -->
         <br>
-        <img src="assets/images/lightoff.jpg" onclick="hintClick(this)" class="hint hint1" title="Clicking this and clicking the board will show the cell and its neighbors for a brief time!">
-        <img src="assets/images/lightoff.jpg" onclick="hintClick(this)" class="hint hint2" title="Clicking this and clicking the board will show the cell and its neighbors for a brief time!">
-        <img src="assets/images/lightoff.jpg" onclick="hintClick(this)" class="hint hint3" title="Clicking this and clicking the board will show the cell and its neighbors for a brief time!">
+        <img onclick="hintClick(this)" class="hint hint-off hint1" title="Clicking this and clicking the board will show the cell and its neighbors for a brief time!
+        will not work before first cell click!">
+        <img onclick="hintClick(this)" class="hint hint-off hint2" title="Clicking this and clicking the board will show the cell and its neighbors for a brief time!
+        will not work before first cell click!">
+        <img onclick="hintClick(this)" class="hint hint-off hint3" title="Clicking this and clicking the board will show the cell and its neighbors for a brief time!
+        will not work before first cell click!"><br>
+        <button class="manual" onclick="manuallyPosMines(this)" title="Clicking this will allow you to set the mines formation yourself!
+        Suitable for testing your friends' might or making them explode!">Manual mines!</button>
     </div>
     <div class="main">
         <div class="modal"><span>Mines: </span><span class="mines-count"></span><span> Cells shown: </span><span

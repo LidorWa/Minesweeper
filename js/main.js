@@ -1,39 +1,46 @@
 'use strict'
 
-var gBoard;     	       // The main matrix 
+var gBoard;
 
-var gLevel = {             // an object indicating the appearnce of the board
-    SIZE: 4,               // that key represents the number of rows and columns
-    MINES: 2,              // that key represents the number of mines on the board
-    LIVES: 1               // that key represents the number of times the user can click on a mine before he loses
+var gLevel = {
+    SIZE: 4,
+    MINES: 2,
+    LIVES: 1,
 };
 
-var gGame = {              // an object indicating the status of the game
-    isOn: true,           // that key indicating if the game is on or not (false will prevent the player from making any changes)
-    shownCount: 0,        // that key represents the number of cells revealed on the board
-    markedCount: 0,       // that key represents the number of flagged cells
+var gGame = {
+    isOn: true,
+    shownCount: 0,
+    markedCount: 0,
     safeCount: 3,
     isHintOn: false,
     hintCount: 3,
-    secsPassed: 0         // that key represents the time passed (will start counting on the first cell click)
-};                        // the info will be shown in spans in a modal (or maybe different places)
+    secsPassed: 0,
+    isManualMinesMode: false,
+    manualMinesCount: 2
+};
 var gIsFirstClick = true;
-var mineSound = new Audio('assets/sounds/mine.mp3');
+var mineSound = new Audio('../assets/sounds/mine.mp3');
 var gIntervalId = null;
 var gMinutes = 0;
 var gLives = gLevel.LIVES;
 var gTimer;
 
 
+// var gUndoArray = [{positions:[{}]}];
+var gUndoArray = [];
+
+
 function init() {
-    // handleNewPlayer();
+    onPageLoadLocalStorage();
     resetModelVarsDomForInit();
     gBoard = buildBoard();
     renderBoard(gBoard);
 }
 
-function resetModelVarsDomForInit(){
+function resetModelVarsDomForInit() {
     gGame.isOn = true;
+    gGame.isManualMinesMode = false;
     gGame.shownCount = 0;
     gGame.markedCount = 0;
     gLives = gLevel.LIVES;
@@ -51,6 +58,10 @@ function resetModelVarsDomForInit(){
     document.querySelector('.hint3').src = 'assets/images/lightoff.jpg'
     var elementToChange = document.getElementsByTagName('body')[0];
     elementToChange.style.cursor = 'default';
+    document.querySelectorAll('.hint').forEach(el => {
+        el.style.display = 'inline-block';
+        el.classList.remove('hint-on');
+    });
     elSpan = document.querySelector('.mines-count');
     elSpan.innerText = gLevel.MINES;
     elSpan = document.querySelector('.lives');
@@ -60,7 +71,6 @@ function resetModelVarsDomForInit(){
     elSpan = document.querySelector('.emoji');
     elSpan.innerText = '(❁´◡`❁)';
 }
-
 
 function buildBoard() {
     gIsFirstClick = true;
@@ -73,7 +83,6 @@ function buildBoard() {
     }
     return board;
 }
-
 
 function renderBoard(board) {
     var strHTML = '';
@@ -90,14 +99,56 @@ function renderBoard(board) {
     elBoard.innerHTML = strHTML;
 }
 
+// function saveAction(cellI, cellJ,) {
+//     // if (gBoard[cellI][cellJ].minesAroundCount === 0){
+
+
+//     // }
+//     gUndoArray.push({ positions: [{ i: cellI, j: cellJ }] });
+//     console.log('gUndoArray from saveAction',gUndoArray)
+
+// }
+
+// function undoAction() {
+//     var posIndex;
+//     var posIndex2;
+//     var reversePos = gUndoArray.pop();
+//     console.log('reversePos',reversePos)
+//     for (var k=0; k<reversePos.positions.length; k++){
+
+//     }
+//     if (reversePos.positions.length === 1) {
+//         posIndex = reversePos.positions[0].i;
+//         console.log('posIndex', posIndex)
+//         posIndex2 = reversePos.positions[0].j;
+//         console.log('posIndex2', posIndex2)
+//         if (gBoard[posIndex][posIndex2].isMine){
+//             gBoard[posIndex][posIndex2].isShown = false;
+//             document.getElementById(`${posIndex}-${posIndex2}`).classList.remove('td_mine');
+//             document.getElementById(`${posIndex}-${posIndex2}`).style.backgroundColor = 'gray';
+//             document.getElementById(`${posIndex}-${posIndex2}`).innerText = '';
+//         }  else {
+//             gBoard[posIndex][posIndex2].isShown = false;
+//             document.getElementById(`${posIndex}-${posIndex2}`).classList.remove('td_regular');
+//             document.getElementById(`${posIndex}-${posIndex2}`).style.backgroundColor = 'gray';
+//             document.getElementById(`${posIndex}-${posIndex2}`).innerText = '';
+//         }
+//         // else if (gBoard[posIndex][posIndex2].isMarked)
+//     }
+// }
 function cellClicked(ellCell, cellI, cellJ) {
     if (!gGame.isOn || ellCell.classList.contains('td_mine') || ellCell.classList.contains('td_regular')
-        || gBoard[cellI][cellJ].isMarked) return;
-    // if (gGame.isHintOn) {
-    //     expandShownForHint(gBoard, cellI,cellJ)
-    //      document.getElementsByTagName("body")[0].style.cursor = 'pointer';
-    // }
+        || (gBoard[cellI][cellJ].isMarked && !gGame.isHintOn)) return;
 
+    if (gGame.isManualMinesMode) {
+        handleManualMines(cellI, cellJ);
+        return;
+    }
+
+    if (gGame.isHintOn) {
+        handleCellClickedHint(cellI, cellJ);
+        return;
+    }
     gBoard[cellI][cellJ].isShown = true;
     gGame.shownCount++;
     var elSpan = document.querySelector('.shown');
@@ -127,6 +178,37 @@ function cellClicked(ellCell, cellI, cellJ) {
 
         gameOver();
     }
+    // saveAction(cellI, cellJ);
+}
+
+
+function handleCellClickedHint(cellI, cellJ) {
+    expandShownForHint(gBoard, cellI, cellJ)
+    document.getElementsByTagName("body")[0].style.cursor = 'default';
+    gGame.isHintOn = false;
+    document.querySelectorAll('.hint-on').forEach(el => {
+        el.style.display = 'none';
+    });
+}
+
+
+function handleManualMines(cellI, cellJ) {
+    if (gGame.manualMinesCount > 0) {
+        gBoard[cellI][cellJ].isMine = true;
+        document.getElementById(`${cellI}-${cellJ}`).classList.add('td_mine');
+        gGame.manualMinesCount--;
+
+        if (gGame.manualMinesCount === 0) {
+            setTimeout(() => {
+                document.querySelectorAll('.td_mine').forEach(el => {
+                    el.classList.remove('td_mine');
+                    var elementToChange = document.getElementsByTagName('body')[0];
+                    elementToChange.style.cursor = 'default';
+                    gGame.isManualMinesMode = false;
+                })
+            }, 200);
+        }
+    }
 }
 
 function firstClick() {
@@ -145,7 +227,11 @@ function startTimer() {
             gMinutes++;
             gGame.secsPassed = 0;
         }
-        elSpan.innerText = gMinutes + ':' + gGame.secsPassed;
+        if (gGame.secsPassed >= 10) elSpan.innerText = '0' + gMinutes + ':' + gGame.secsPassed;
+        else elSpan.innerText = '0' + gMinutes + ':' + '0' + gGame.secsPassed;
+        if (gMinutes >= 10) elSpan.innerText = gMinutes + ':' + '0' + gGame.secsPassed;
+
+
 
     }, 1000);
 }
@@ -277,10 +363,12 @@ function changeDifficulty(elBtn) {
         gLevel.SIZE = 8;
         gLevel.MINES = 12;
         gLevel.LIVES = 3;
+        gGame.manualMinesCount = 12;
     } else {
         gLevel.SIZE = 12;
         gLevel.MINES = 30;
         gLevel.LIVES = 3;
+        gGame.manualMinesCount = 30;
     }
     init();
 }

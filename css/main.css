@@ -81,30 +81,27 @@ th {
 .hardest{
     background-color:maroon;
 }
-.bonuses{
+.bonuses-left{
     display: block;
     position:absolute;
-    margin-left: 530px;;
+    margin-left: 470px;
     
 }
 .safe-click{
     background-color: pink;
 }
-.tooltiptext-safe {
-    visibility: hidden;
-    width: 120px;
-    background-color: black;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-    position: absolute;
-    z-index: 1;
-  }
-.safe-click:hover + .tooltiptext-safe{
-    visibility: visible;
+
+.hint-click{
+    background-color: rebeccapurple;
 }
-.hint:hover .tooltip-hint{
-    visibility: visible;
+.hint-off {
+    content:url("../assets/images/lightoff.jpg");
 }
+.hint-on{
+    content:url("../assets/images/lighton.jpg");
+}
+
+
+
+
 

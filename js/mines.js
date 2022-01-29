@@ -14,6 +14,7 @@ function emptyCellsArray() {
 }
 
 function addMines(board) {
+    if (gGame.manualMinesCount === 0) return;
     var array = emptyCellsArray();
     for (var k = 0; k < gLevel.MINES; k++) {
         var idx = getRandomIntInclusive(0, array.length - 1)

@@ -1,6 +1,8 @@
 'use strict'
+var gManualMinesCount;
 
 function safeClick(elBtn) {
+    if (gIsFirstClick) return;
     if (gGame.safeCount === 1) {
         elBtn.disabled = 'true';
         elBtn.style.cursor = 'not-allowed';
@@ -35,32 +37,68 @@ function checkCellsForSafeClick() {
 }
 
 function hintClick(elHint) {
-    elHint.src = 'assets/images/lighton.jpg';
-    gGame.isHintOn = true;
-    var elementToChange = document.getElementsByTagName("body")[0];
-    elementToChange.style.cursor = "url('assets/images/lighton.jpg'), auto";
+    if (gIsFirstClick) return;
+    if (!gGame.isHintOn) {
+        gGame.isHintOn = true;
+        console.log('hint element before', elHint);
+        elHint.classList.remove('hint-off');
+        elHint.classList.add('hint-on');
+        console.log('hint element after', elHint);
+
+        var elementToChange = document.getElementsByTagName("body")[0];
+        elementToChange.style.cursor = "url('assets/images/lighton.jpg'), auto";
+    } else {
+        gGame.isHintOn = false;
+        document.querySelectorAll('.hint').forEach(el => {
+            elHint.classList.remove('hint-on');
+        });
+        var elementToChange = document.getElementsByTagName("body")[0];
+        elementToChange.style.cursor = "default";
+    }
 
 }
 
-// function expandShownForHint(board, cellI, cellJ) {
-//     for (var i = cellI - 1; i <= cellI + 1; i++) {
-//         if (i < 0 || i >= board.length) continue;
+function expandShownForHint(board, cellI, cellJ) {
+    for (var i = cellI - 1; i <= cellI + 1; i++) {
+        if (i < 0 || i >= board.length) continue;
 
-//         for (var j = cellJ - 1; j <= cellJ + 1; j++) {
+        for (var j = cellJ - 1; j <= cellJ + 1; j++) {
 
-//             if (j < 0 || j >= board[i].length) continue;
+            if (j < 0 || j >= board[i].length) continue;
 
-//             if (i === cellI && j === cellJ) continue;
-//             if (gBoard[i][j].isMine) {
-//                 document.getElementById(`${i}-${j}`).classList.add('td_mine');
-//                 document.getElementById(`${i}-${j}`).style.backgroundColor = 'gray';
+            if (gBoard[i][j].isShown) continue;
+            if (gBoard[i][j].isMine) {
+                document.getElementById(`${i}-${j}`).classList.add('td_mine');
+                document.getElementById(`${i}-${j}`).classList.add('hint-click');
+                document.getElementById(`${i}-${j}`).classList.remove('td_flag');
+            } else {
+                document.getElementById(`${i}-${j}`).classList.add('hint-click');
+                document.getElementById(`${i}-${j}`).classList.remove('td_flag');
+                document.getElementById(`${i}-${j}`).innerText = board[i][j].minesAroundCount;
+            }
+        }
+    }
+    setTimeout(function () {
+        document.querySelectorAll('.hint-click').forEach(el => {
+            el.classList.remove('hint-click');
+            el.classList.remove('td_mine');
+            el.innerText = '';
+            var pos = el.id.split('-');
+            var posI = pos[0];
+            var posJ = pos[1];
+            if (gBoard[posI][posJ].isMarked) {
+                el.classList.add('td_flag');
+            }
 
-//             } else {
-//                 document.getElementById(`${i}-${j}`).classList.add('td_regular');
-//                 document.getElementById(`${i}-${j}`).innerText = board[i][j].minesAroundCount;
-//                 var elSpan = document.querySelector('.shown');
-//                 elSpan.innerText = gGame.shownCount;
-//             }
-//         }
-//     }
-// }
+        });
+
+    }, 1000);
+}
+
+function manuallyPosMines(elBtn) {
+        var elementToChange = document.getElementsByTagName("body")[0];
+        elementToChange.style.cursor = "url('assets/images/2.jpg'), auto";
+        gManualMinesCount = gLevel.MINES;
+        gGame.isManualMinesMode = true;
+}
+
