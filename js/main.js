@@ -20,7 +20,7 @@ var gGame = {
     manualMinesCount: 2
 };
 var gIsFirstClick = true;
-var mineSound = new Audio('../assets/sounds/mine.mp3');
+var mineSound = new Audio('assets/sounds/mine.mp3');
 var gIntervalId = null;
 var gMinutes = 0;
 var gLives = gLevel.LIVES;
