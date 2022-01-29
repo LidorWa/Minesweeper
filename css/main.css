@@ -36,11 +36,11 @@ th {
 .td_mine{
     background-image: url(../assets/images/2.jpg);
     background-size: cover;
-    background-color: red;
+    background-color: red !important;;
 }
 
 .td_regular{
-    background-color: greenyellow;
+    background-color: greenyellow !important;
 }
 
 .td_flag{
@@ -100,6 +100,7 @@ th {
 .hint-on{
     content:url("../assets/images/lighton.jpg");
 }
+
 
 
 

@@ -20,7 +20,7 @@ var gGame = {
     manualMinesCount: 2
 };
 var gIsFirstClick = true;
-var mineSound = new Audio('assets/sounds/mine.mp3');
+var mineSound = new Audio('../assets/sounds/mine.mp3');
 var gIntervalId = null;
 var gMinutes = 0;
 var gLives = gLevel.LIVES;
@@ -28,8 +28,9 @@ var gTimer;
 
 
 // var gUndoArray = [{positions:[{}]}];
+// var gUndoArray = [{positions:[{i:0,j:0}]}];
 var gUndoArray = [];
-
+// ({ positions: [{ i: cellI, j: cellJ }] })
 
 function init() {
     onPageLoadLocalStorage();
@@ -99,43 +100,45 @@ function renderBoard(board) {
     elBoard.innerHTML = strHTML;
 }
 
-// function saveAction(cellI, cellJ,) {
-//     // if (gBoard[cellI][cellJ].minesAroundCount === 0){
+function saveAction(positions) {
+    gUndoArray.push({ positions });
+    console.log('gUndoArray from saveAction', gUndoArray)
 
+}
 
-//     // }
-//     gUndoArray.push({ positions: [{ i: cellI, j: cellJ }] });
-//     console.log('gUndoArray from saveAction',gUndoArray)
+function undoAction() {
+    if (!gGame.isOn) return;
+    var posIndex;
+    var posIndex2;
+    var reversePos = gUndoArray.pop();
+    console.log('reversePos', reversePos)
+    for (var k = 0; k < reversePos.positions.length; k++) {
+        posIndex = reversePos.positions[k].i;
+        console.log('posIndex', posIndex)
+        posIndex2 = reversePos.positions[k].j;
+        console.log('posIndex2', posIndex2)
+        if (gBoard[posIndex][posIndex2].isMine) {
+            gBoard[posIndex][posIndex2].isShown = false;
+            gLives++;
+            var elLives = document.querySelector('.lives');
+            elLives.innerText = gLives;
+            var cellMine = document.getElementById(`${posIndex}-${posIndex2}`);
+            cellMine.classList.remove('td_mine');
+            cellMine.style.backgroundColor = 'gray';
+            cellMine.innerText = '';
+        } else {
+            gBoard[posIndex][posIndex2].isShown = false;
+            var cellRegular = document.getElementById(`${posIndex}-${posIndex2}`);
+            cellRegular.classList.remove('td_regular');
+            cellRegular.style.backgroundColor = 'gray';
+            cellRegular.innerText = '';
+        }
+        gGame.shownCount--;
+        var spanShown = document.querySelector('.shown');
+        spanShown.innerText = gGame.shownCount;
+    }
 
-// }
-
-// function undoAction() {
-//     var posIndex;
-//     var posIndex2;
-//     var reversePos = gUndoArray.pop();
-//     console.log('reversePos',reversePos)
-//     for (var k=0; k<reversePos.positions.length; k++){
-
-//     }
-//     if (reversePos.positions.length === 1) {
-//         posIndex = reversePos.positions[0].i;
-//         console.log('posIndex', posIndex)
-//         posIndex2 = reversePos.positions[0].j;
-//         console.log('posIndex2', posIndex2)
-//         if (gBoard[posIndex][posIndex2].isMine){
-//             gBoard[posIndex][posIndex2].isShown = false;
-//             document.getElementById(`${posIndex}-${posIndex2}`).classList.remove('td_mine');
-//             document.getElementById(`${posIndex}-${posIndex2}`).style.backgroundColor = 'gray';
-//             document.getElementById(`${posIndex}-${posIndex2}`).innerText = '';
-//         }  else {
-//             gBoard[posIndex][posIndex2].isShown = false;
-//             document.getElementById(`${posIndex}-${posIndex2}`).classList.remove('td_regular');
-//             document.getElementById(`${posIndex}-${posIndex2}`).style.backgroundColor = 'gray';
-//             document.getElementById(`${posIndex}-${posIndex2}`).innerText = '';
-//         }
-//         // else if (gBoard[posIndex][posIndex2].isMarked)
-//     }
-// }
+}
 function cellClicked(ellCell, cellI, cellJ) {
     if (!gGame.isOn || ellCell.classList.contains('td_mine') || ellCell.classList.contains('td_regular')
         || (gBoard[cellI][cellJ].isMarked && !gGame.isHintOn)) return;
@@ -160,7 +163,9 @@ function cellClicked(ellCell, cellI, cellJ) {
         ellCell.innerText = gBoard[cellI][cellJ].minesAroundCount;
         ellCell.classList.add('td_regular');
 
-        expandShown(gBoard, cellI, cellJ);
+        var positions = [{ i: cellI, j: cellJ }];
+        expandShown(gBoard, cellI, cellJ, positions);
+        saveAction(positions);
     } else if (gBoard[cellI][cellJ].isMine) {
         mineSound.play();
         ellCell.classList.add('td_mine');
@@ -171,10 +176,16 @@ function cellClicked(ellCell, cellI, cellJ) {
         else elSpan.innerText = gLives;
 
         gameOver();
+        saveAction([{ i: cellI, j: cellJ }])
     } else {
         ellCell.classList.add('td_regular');
         ellCell.innerText = gBoard[cellI][cellJ].minesAroundCount;
-        expandShown(gBoard, cellI, cellJ);
+
+        var positions = [{ i: cellI, j: cellJ }];
+
+        var positions = [{ i: cellI, j: cellJ }];
+        expandShown(gBoard, cellI, cellJ, positions);
+        saveAction(positions);
 
         gameOver();
     }
@@ -183,6 +194,7 @@ function cellClicked(ellCell, cellI, cellJ) {
 
 
 function handleCellClickedHint(cellI, cellJ) {
+    if (!gGame.isOn) return;
     expandShownForHint(gBoard, cellI, cellJ)
     document.getElementsByTagName("body")[0].style.cursor = 'default';
     gGame.isHintOn = false;
@@ -298,29 +310,35 @@ function setMinesNegsCountForCell(cellI, cellJ, board) {
     }
 }
 
-function expandShown(board, cellI, cellJ) {
-    if (board[cellI][cellJ].minesAroundCount !== 0) return;
+function expandShown(board, cellI, cellJ, positions) {
+    if (board[cellI][cellJ].minesAroundCount === 0) {
+        for (var i = cellI - 1; i <= cellI + 1; i++) {
+            if (i < 0 || i >= board.length) continue;
 
-    for (var i = cellI - 1; i <= cellI + 1; i++) {
-        if (i < 0 || i >= board.length) continue;
+            for (var j = cellJ - 1; j <= cellJ + 1; j++) {
 
-        for (var j = cellJ - 1; j <= cellJ + 1; j++) {
+                if (j < 0 || j >= board[i].length) continue;
 
-            if (j < 0 || j >= board[i].length) continue;
+                if (i === cellI && j === cellJ) continue;
 
-            if (i === cellI && j === cellJ) continue;
+                if (!board[i][j].isMine && !board[i][j].isShown && !board[i][j].isMarked) {
+                    board[i][j].isShown = true;
+                    document.getElementById(`${i}-${j}`).classList.add('td_regular');
+                    document.getElementById(`${i}-${j}`).innerText = board[i][j].minesAroundCount;
+                    gGame.shownCount++;
 
-            if (!board[i][j].isMine && !board[i][j].isShown && !board[i][j].isMarked) {
-                board[i][j].isShown = true;
-                document.getElementById(`${i}-${j}`).classList.add('td_regular');
-                document.getElementById(`${i}-${j}`).innerText = board[i][j].minesAroundCount;
-                gGame.shownCount++;
-                expandShown(board, i, j);
-                var elSpan = document.querySelector('.shown');
-                elSpan.innerText = gGame.shownCount;
+                    positions.push({ i, j });
+                    expandShown(board, i, j, positions);
+
+                    var elSpan = document.querySelector('.shown');
+                    elSpan.innerText = gGame.shownCount;
+
+                }
             }
         }
     }
+
+    // saveAction(positions);
 }
 
 

@@ -2,6 +2,7 @@
 var gManualMinesCount;
 
 function safeClick(elBtn) {
+    if (!gGame.isOn) return;
     if (gIsFirstClick) return;
     if (gGame.safeCount === 1) {
         elBtn.disabled = 'true';
@@ -37,6 +38,7 @@ function checkCellsForSafeClick() {
 }
 
 function hintClick(elHint) {
+    if (!gGame.isOn) return;
     if (gIsFirstClick) return;
     if (!gGame.isHintOn) {
         gGame.isHintOn = true;
@@ -96,6 +98,7 @@ function expandShownForHint(board, cellI, cellJ) {
 }
 
 function manuallyPosMines(elBtn) {
+    if (!gGame.isOn) return;
         var elementToChange = document.getElementsByTagName("body")[0];
         elementToChange.style.cursor = "url('assets/images/2.jpg'), auto";
         gManualMinesCount = gLevel.MINES;

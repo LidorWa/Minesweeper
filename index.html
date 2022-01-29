@@ -8,7 +8,7 @@
     <title>Mine sweeper game!</title>
 </head>
 
-<body onload="init()">  <!--onkeyup="handleKey(event)" -->
+<body onload="init()">  
     <div class="game-scores">
         <table class="scores">
             <tablebody>
@@ -34,7 +34,7 @@
     <div class="bonuses-left">
         <button class="safe-btn" onclick="safeClick(this)" title="Clicking this will reveal one none-mine cell for a brief time!
          will not work before first cell click!">Safe click!</button>
-         <!-- <button class="undo" onclick="undoAction()" title="Rewind time!!!">Undo!</button> -->
+         <button class="undo" onclick="undoAction()" title="Rewind time!!!">Undo!</button>
         <br>
         <img onclick="hintClick(this)" class="hint hint-off hint1" title="Clicking this and clicking the board will show the cell and its neighbors for a brief time!
         will not work before first cell click!">
